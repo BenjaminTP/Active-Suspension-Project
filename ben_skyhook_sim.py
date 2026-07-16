@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 
+# Constants
 M1 = 30.0
 M2 = 375.0
 K1 = 225000.0
@@ -12,15 +13,17 @@ G = 9.81
 
 
 def main():
-    t_0, t_f = 0, 3
-    z0 = [0.0, 0.0, 0.0, 0.0]
+    t_0, t_f = 0, 3 # Time period to solve for
+    z0 = [0.0, 0.0, 0.0, 0.0] # Initial Conditions
 
-    sol = solve_ivp(deriv, (t_0, t_f), z0, t_eval=np.linspace(t_0, t_f, 500), max_step=1e-3)
+    sol = solve_ivp(deriv, (t_0, t_f), z0, t_eval=np.linspace(t_0, t_f, 500), max_step=1e-3) # Solve the ODE
     
+    # Extract solutions
     t = sol.t
     x1, x2, v1, v2 = sol.y
     a2 = (K2 * (x1 - x2) + B * (v1 - v2)) / M2
 
+    # Solve body frequency, RMS body accel., and peak body accel.
     freq2 = solve_freq(x2, t)
     rms_a2 = np.sqrt(np.mean(a2**2))
     print("---------------- Results ----------------")
@@ -29,6 +32,7 @@ def main():
     print(f"Peak Body Accleration: {np.max(a2):.3f} m/s^2, or or {(np.max(a2)/G):.3f} g's")
     print("-----------------------------------------")
 
+    # Plotting
     fig, (ax1, ax2) = plt.subplots(2, 1)
     plt.subplots_adjust(hspace=0.5)
 
@@ -52,6 +56,7 @@ def main():
 
     fig.tight_layout()
     
+    # Plot saving
     filename = input("Filename: ")
     if filename not in ["skip", "pass", "no", "exit", "test"]:
         plt.savefig(f"images/{filename}", dpi=150)
@@ -71,14 +76,16 @@ def deriv(t, y):
     return [v1, v2, a1, a2]
 
 
+# Road height as a function of time
 def road(t):
     t0, t1, H = 0.5, 0.7, 0.05
     if t0 <= t and t <= t1:
         return 0.5 * H * (1 - np.cos(2 * np.pi * (t - t0) / (t1 - t0)))
-    return 0.0 # Road height as a function of time
+    return 0.0
 
 
 def solve_freq(pos, t):
+    # Populate an array with times where the position passes zero
     cross_times = []
     i_last = 0
     for i in range(1, len(pos)):
@@ -86,6 +93,7 @@ def solve_freq(pos, t):
             cross_times.append(t[i])
         i_last = i
 
+    # Add up the differences between cross times and find the mean
     diff = 0
     for j in range(1, len(cross_times)):
         diff += cross_times[j]-cross_times[j-1] # Calculate difference
