@@ -28,7 +28,7 @@ def main():
     print("---------------- Results ----------------")
     print(f"Body Frequency: {freq2:.3f} Hz")
     print(f"RMS Body Acceleration: {rms_a2:.3f} m/s^2, or {(rms_a2/G):.3f} g's")
-    print(f"Peak Body Accleration: {np.max(a2):.3f} m/s^2, or or {(np.max(a2)/G):.3f} g's")
+    print(f"Peak Body Accleration: {np.max(np.abs(a2)):.3f} m/s^2, or or {(np.max(np.abs(a2))/G):.3f} g's")
     print("-----------------------------------------")
 
     # Plotting
@@ -41,11 +41,11 @@ def main():
     ax2.plot(t, a2, label="a2", color="r")
 
     ax1.set_ylabel("Height from Equil. (mm)")
-    ax2.set_ylabel("Body Accel. (mm/s^2)")
+    ax2.set_ylabel("Body Accel. (m/s^2)")
     ax2.set_xlabel("Time (s)")
 
     ax1.set_title(f"Body Frequency: {freq2:.3f} Hz")
-    ax2.set_title(f"RMS Body Acceleration: {rms_a2:.3f} m/s^2)\n Peak Body Accleration: {np.max(a2):.3f} m/s^2")
+    ax2.set_title(f"RMS Body Acceleration: {rms_a2:.3f} m/s^2)\n Peak Body Accleration: {np.max(np.abs(a2)):.3f} m/s^2")
 
     ax1.grid(alpha=0.25)
     ax2.grid(alpha=0.25)
